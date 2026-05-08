@@ -3,10 +3,10 @@ import smtplib
 from email.mime.text import MIMEText
 import os
 
-URL = "https://www.to-kousya.or.jp/chintai/reco/?op_support=ファミリーウィーク"
+URL = "https://jhomes.to-kousya.or.jp/search/jkknet/service/akiyaJyokenDirect"
 
 TARGET_KEYWORDS = [
-    "八王子泉町",
+    "世田谷", 
 ]
 
 def send_mail(body):
@@ -27,11 +27,18 @@ with sync_playwright() as p:
     page = browser.new_page()
     page.goto(URL, wait_until="networkidle", timeout=60000)
 
-    html = page.content()
+    # JavaScriptの描画待ち
+    page.wait_for_timeout(5000)
+
+    text = page.locator("body").inner_text()
+
+    print("========== PAGE TEXT START ==========")
+    print(text[:5000])
+    print("========== PAGE TEXT END ==========")
 
     browser.close()
 
-matched = [x for x in TARGET_KEYWORDS if x in html]
+matched = [x for x in TARGET_KEYWORDS if x in text]
 
 if matched:
     body = "空室候補を検知:\n\n"
